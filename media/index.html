@@ -43,11 +43,11 @@
             })
 
             updateDeviceList()
-            navigator.getUserMedia.addEventListener("devicechange", () => {
+            navigator.mediaDevices.addEventListener("devicechange", () => {
                 updateDeviceList()
             })
 
-            function updateDeviceList() {
+            async function updateDeviceList() {
                 const devices = await getVideoDevices()
                 devices.forEach(video => {
                     if (!currentDevice) currentDeviceId = video.deviceId
