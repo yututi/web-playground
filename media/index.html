@@ -42,7 +42,9 @@
                         video: {
                             deviceId: currentDeviceId,
                             height: 400,
-                            width: 300
+                            width: 300,
+                            echoCancellation: true,
+                            noiseSuppression: true
                         }
                     })
                     setStream(stream)
@@ -68,14 +70,6 @@
 
             async function updateDeviceList() {
                 videos.innerHTML = ""
-                await navigator.mediaDevices.getUserMedia({
-                    video: true,
-                    audio: true
-                }).catch(() => {
-                    const option = document.createElement("option")
-                    option.label = "カメラがありません"
-                    videos.appendChild(option)
-                })
                 const devices = await getVideoDevices()
                 devices.forEach(video => {
                     if (!currentDeviceId) currentDeviceId = video.deviceId
@@ -87,6 +81,15 @@
             }
 
             async function getVideoDevices() {
+                // 先にgetUserMediaでパーミッションとらないとenumerateDevicesでカメラを取得できない
+                await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true
+                }).catch(() => {
+                    const option = document.createElement("option")
+                    option.label = "カメラがありません"
+                    videos.appendChild(option)
+                })
                 const devices = await navigator.mediaDevices.enumerateDevices()
                 console.log("enumerateDevices", devices)
                 return devices.filter(device => device.kind === "videoinput")
