@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="utf-8" />
+    <title>media</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+
+            const video = document.getElementById("video")
+            const shareStartBtn = document.getElementById("shareStartBtn")
+            const videoStartBtn = document.getElementById("videoStartBtn")
+            const videoStopBtn = document.getElementById("videoStopBtn")
+            const videos = document.getElementById("videos")
+
+            let currentDeviceId = null
+
+            shareStartBtn.addEventListener("click", async () => {
+                const stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: true,
+                    audio: true,
+                })
+                video.srcObject = stream
+            })
+
+            videoStartBtn.addEventListener("click", async () => {
+                if (currentDeviceId) {
+                    navigator.mediaDevices.getUserMedia({
+                        audio: {
+                            echoCancellation: true
+                        },
+                        video: {
+                            deviceId: currentDeviceId
+                        }
+                    })
+                } else {
+                    alert("デバイスを選択してください")
+                }
+            })
+
+            videoStopBtn.addEventListener("click", () => {
+                video.srcObject = null
+            })
+
+            updateDeviceList()
+            navigator.getUserMedia.addEventListener("devicechange", () => {
+                updateDeviceList()
+            })
+
+            function updateDeviceList() {
+                const devices = await getVideoDevices()
+                devices.forEach(video => {
+                    if (!currentDevice) currentDeviceId = video.deviceId
+                    const option = document.createElement("option")
+                    option.label = video.label
+                    option.value = video.deviceId
+                    videos.appendChild(option)
+                })
+            }
+
+            async function getVideoDevices() {
+                const devices = await navigator.mediaDevices.enumerateDevices()
+                return devices.filter(device => device.kind === "videoinput")
+            }
+        })
+    </script>
+    <style>
+        video {
+            border: 1px solid gainsboro;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="menu">
+        <button id="shareStartBtn">画面共有</button>
+        <label for="videos">カメラ選択：
+            <select id="videos"></select>
+        </label>
+        <button id="videoStartBtn">カメラ共有</button>
+        <button id="videoStopBtn">共有停止</button>
+    </div>
+    <video id="video" autoplay></video>
+</body>
+
+</html>
