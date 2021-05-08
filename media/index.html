@@ -50,15 +50,20 @@
                 stopStream = null
             })
 
+            videos.addEventListener("change", e => {
+                currentDeviceId = e.target.value
+            })
+
             updateDeviceList()
             navigator.mediaDevices.addEventListener("devicechange", () => {
                 updateDeviceList()
             })
 
             async function updateDeviceList() {
+                videos.innerHTML = ""
                 const devices = await getVideoDevices()
                 devices.forEach(video => {
-                    if (!currentDevice) currentDeviceId = video.deviceId
+                    if (!currentDeviceId) currentDeviceId = video.deviceId
                     const option = document.createElement("option")
                     option.label = video.label
                     option.value = video.deviceId
