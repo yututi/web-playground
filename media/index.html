@@ -16,29 +16,36 @@
             let currentDeviceId = null
             let stopStream = null
 
-            shareStartBtn.addEventListener("click", async () => {
-                const stream = await navigator.mediaDevices.getDisplayMedia({
-                    video: true,
-                    audio: true,
-                })
+            const setStream = (stream) => {
                 video.srcObject = stream
                 stopStream = () => {
                     stream.getTracks().forEach(track => {
                         track.stop()
                     })
                 }
+            }
+
+            shareStartBtn.addEventListener("click", async () => {
+                const stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: true,
+                    audio: true,
+                })
+                setStream(stream)
             })
 
             videoStartBtn.addEventListener("click", async () => {
                 if (currentDeviceId) {
-                    navigator.mediaDevices.getUserMedia({
+                    const stream = await navigator.mediaDevices.getUserMedia({
                         audio: {
                             echoCancellation: true
                         },
                         video: {
-                            deviceId: currentDeviceId
+                            deviceId: currentDeviceId,
+                            height: 400,
+                            width: 300
                         }
                     })
+                    setStream(stream)
                 } else {
                     alert("デバイスを選択してください")
                 }
