@@ -61,6 +61,14 @@
 
             async function updateDeviceList() {
                 videos.innerHTML = ""
+                await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: true
+                }).catch(() => {
+                    const option = document.createElement("option")
+                    option.label = "カメラがありません"
+                    videos.appendChild(option)
+                })
                 const devices = await getVideoDevices()
                 devices.forEach(video => {
                     if (!currentDeviceId) currentDeviceId = video.deviceId
