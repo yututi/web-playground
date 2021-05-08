@@ -1,5 +1,7 @@
 # Web playground
 
+Hosting on https://yututi.github.io/web-playground/
+
 色々試すのに使うリポジトリ
 
 - media
