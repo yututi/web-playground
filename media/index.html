@@ -14,6 +14,7 @@
             const videos = document.getElementById("videos")
 
             let currentDeviceId = null
+            let stopStream = null
 
             shareStartBtn.addEventListener("click", async () => {
                 const stream = await navigator.mediaDevices.getDisplayMedia({
@@ -21,6 +22,11 @@
                     audio: true,
                 })
                 video.srcObject = stream
+                stopStream = () => {
+                    stream.getTracks().forEach(track => {
+                        track.stop()
+                    })
+                }
             })
 
             videoStartBtn.addEventListener("click", async () => {
@@ -40,6 +46,8 @@
 
             videoStopBtn.addEventListener("click", () => {
                 video.srcObject = null
+                if (stopStream) stopStream()
+                stopStream = null
             })
 
             updateDeviceList()
