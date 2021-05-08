@@ -73,6 +73,7 @@
 
             async function getVideoDevices() {
                 const devices = await navigator.mediaDevices.enumerateDevices()
+                console.log("enumerateDevices", devices)
                 return devices.filter(device => device.kind === "videoinput")
             }
         })
